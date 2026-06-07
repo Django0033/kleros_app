@@ -1,5 +1,6 @@
 package com.kleros.dice
 
+@Suppress("MagicNumber")
 enum class DiceType(val faces: Int, val label: String) {
     D4(4, "D4"),
     D6(6, "D6"),

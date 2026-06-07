@@ -1,0 +1,52 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Language: Kotlin 2.2.10
+  Framework: Jetpack Compose (Material3), Android SDK 36
+  Build: Gradle 9.4.1 / AGP 9.2.1 / Kotlin DSL
+  Architecture: Single-module Android app, Activity + Composables, no DI / navigation libs detected yet
+  Package: com.kleros
+  Min SDK: 24 / Target: 36 / Java 11
+
+testing:
+  strict_tdd: true
+  runner: JUnit 4.13.2
+  runner_command: ./gradlew test
+  layers:
+    unit: JUnit 4 (src/test/)
+    integration: AndroidX Test 1.1.5 + Espresso 3.5.1 (src/androidTest/)
+    e2e: Compose UI Test JUnit4
+  coverage: true
+  coverage_tool: JaCoCo 0.8.12
+  coverage_command: ./gradlew jacocoTestReport
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns
+    - Write tests BEFORE implementation (RED → GREEN → REFACTOR)
+    tdd: true
+    test_command: ./gradlew test
+  verify:
+    - All new code MUST have corresponding tests (RED before GREEN)
+    - Tests MUST pass before verification is complete
+    test_command: ./gradlew test
+    build_command: ./gradlew assembleDebug
+    check_command: ./gradlew check
+    coverage_tool: JaCoCo 0.8.12
+    coverage_command: ./gradlew jacocoTestReport
+    coverage_threshold: 0.0
+    coverage_report: app/build/reports/jacoco/jacocoTestReport/html/index.html
+  archive:
+    - Warn before merging destructive deltas

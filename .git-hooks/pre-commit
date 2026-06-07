@@ -1,0 +1,38 @@
+#!/bin/bash
+# Pre-commit hook: run linter + static analysis before allowing a commit.
+# Bypass with: SKIP_CHECKS=1 git commit
+# Bypass for a specific check: SKIP_CHECKS=ktlint git commit
+
+set -eo pipefail
+
+if [ -n "$SKIP_CHECKS" ]; then
+    echo "⏭️  SKIP_CHECKS detected, bypassing pre-commit hook"
+    exit 0
+fi
+
+echo "🔍 Running pre-commit checks..."
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+cd "$PROJECT_ROOT"
+
+# --- ktlintCheck ---
+if [[ "$SKIP_CHECKS" != *"ktlint"* ]]; then
+    echo "  📐 ktlintCheck..."
+    if ! ./gradlew ktlintCheck --quiet 2>/dev/null; then
+        echo "❌ ktlintCheck failed. Run './gradlew ktlintFormat' to fix."
+        exit 1
+    fi
+    echo "  ✅ ktlint passed"
+fi
+
+# --- detekt ---
+if [[ "$SKIP_CHECKS" != *"detekt"* ]]; then
+    echo "  🔎 detekt..."
+    if ! ./gradlew detekt --quiet 2>/dev/null; then
+        echo "❌ detekt failed. Fix issues or update baseline with './gradlew detektBaseline'."
+        exit 1
+    fi
+    echo "  ✅ detekt passed"
+fi
+
+echo "✅ All pre-commit checks passed"

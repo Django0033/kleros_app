@@ -34,6 +34,7 @@ fun TableScreen(
     tables: List<TableDef>,
     modifier: Modifier = Modifier,
     title: String = "",
+    diceType: DiceType = DiceType.D20,
 ) {
     var selectedTableIndex by remember { mutableIntStateOf(0) }
     var currentResult by remember { mutableStateOf<TableRollResult?>(null) }
@@ -65,7 +66,7 @@ fun TableScreen(
         FilledTonalButton(
             onClick = {
                 val result = TableRoller.roll(tables[selectedTableIndex]) {
-                    DiceRoller.roll(DiceType.D20)
+                    DiceRoller.roll(diceType)
                 }
                 currentResult = result
                 if (result is TableRollResult.Success) {

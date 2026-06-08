@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kleros.dice.DiceScreen
+import com.kleros.meaning.MeaningScreen
 import com.kleros.namegenerator.NameScreen
 import com.kleros.ui.theme.KlerosTheme
 
@@ -29,6 +30,7 @@ import com.kleros.ui.theme.KlerosTheme
 private enum class Screen(val label: String) {
     DICE("Dice Roll"),
     NAME_GENERATOR("Name Gen"),
+    MEANING("Meaning"),
 }
 
 class MainActivity : ComponentActivity() {
@@ -69,6 +71,7 @@ private fun AppNavigation(modifier: Modifier = Modifier) {
         when (currentScreen) {
             Screen.DICE -> DiceScreen()
             Screen.NAME_GENERATOR -> NameScreen()
+            Screen.MEANING -> MeaningScreen()
         }
     }
 }

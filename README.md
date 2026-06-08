@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, and scene inspiration tables. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, and NPC creation. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -40,6 +40,16 @@ Roll on 1d100 word tables for scene inspiration — action and description word 
 - **2-point ranges**: 1-2, 3-4, ..., 99-100 for fine-grained results
 - **Cross-table rolling**: Switch between Action and Description with a tap
 
+### Character Crafter
+
+Generate quick NPCs with descriptors and statistics — four independent rolls on a shared word pool.
+
+- **4 descriptor slots**: Identity, Mind, Body, Talent — each rolled independently on a 100-word pool
+- **Statistics tier**: 1d10 range table (50% lower to 50% higher)
+- **Single tap generation**: One button rolls all descriptors and stats at once
+- **Character card**: Formatted result showing all 4 slots and statistics tier
+- **Generation history**: Last 10 NPCs preserved per session
+
 ## Screens
 
 | Screen | Description |
@@ -47,6 +57,7 @@ Roll on 1d100 word tables for scene inspiration — action and description word 
 | **Dice Roll** | Select a dice type, roll, and see animated results with history |
 | **Name Gen** | Choose roll mode, generate fantasy names, and browse history |
 | **Meaning** | Roll on Action or Description word tables for scene inspiration |
+| **Char Caft** | Generate NPCs with descriptors and statistics |
 
 ## Architecture
 
@@ -78,6 +89,12 @@ app/src/main/java/com/kleros/
 ├── meaning/                   # Meaning tables feature
 │   ├── MeaningData.kt         # 100 word entries (50 action + 50 description)
 │   └── MeaningScreen.kt       # TableScreen wrapper with D100
+├── character/                 # Character Crafter feature
+│   ├── CharacterData.kt       # 100 descriptor + 5 statistics entries
+│   ├── CharacterCrafter.kt    # NPC generation engine
+│   ├── CharacterResult.kt     # Data class with 4 slots + stat
+│   ├── CharacterHistory.kt    # Immutable capped history
+│   └── CharacterScreen.kt     # NPC generation composable
 └── ui/theme/                  # Material3 theming
     ├── Color.kt
     ├── Theme.kt               # KlerosTheme with dynamic color support
@@ -88,7 +105,8 @@ app/src/main/java/com/kleros/
 
 - **Pure functions**: `DiceRoller.roll()`, `NameGenerator.generate()`, and `TableRoller.roll()` are pure Kotlin with no Android dependencies — trivially testable
 - **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
-- **Reusable screen**: `TableScreen` composable accepts a list of `TableDef` and renders a complete selector-roll-result-history flow. Adding a new table feature is just data + a thin wrapper
+- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter)
+- **Injectable randomness**: All generators accept a `rollFn: (DiceType) -> Int` parameter, defaulting to `DiceRoller.roll()`. Tests inject deterministic lambdas for predictable results
 - **Immutable state**: All history types return new instances on append — no mutation
 - **Composable-local state**: `remember { mutableStateOf(...) }` for screen state — no ViewModel overhead for this scope
 

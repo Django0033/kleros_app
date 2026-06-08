@@ -86,7 +86,7 @@
 
 ## Phase 3 — Screen (Compose UI)
 
-### Task S1: TableScreen + Instrumented Tests
+### Task S1: TableScreen + Instrumented Tests ✅
 | Field | Value |
 |-------|-------|
 | **ID** | `kleros-table-roller-S1` |
@@ -110,7 +110,7 @@
 
 ## Phase 4 — Lint & Verification
 
-### Task V1: detekt Baseline + Lint Pass
+### Task V1: detekt Baseline + Lint Pass ✅
 | Field | Value |
 |-------|-------|
 | **ID** | `kleros-table-roller-V1` |
@@ -121,7 +121,7 @@
 | **Files** | `app/config/detekt/detekt.yml` (may update baseline) |
 | **Description** | Run `./gradlew detekt` and `./gradlew ktlintCheck`. Suppress `MagicNumber` on domain data files per existing pattern. Update baseline if needed. Zero new issues required. |
 
-### Task V2: Full Verification Gate
+### Task V2: Full Verification Gate ✅
 | Field | Value |
 |-------|-------|
 | **ID** | `kleros-table-roller-V2` |
@@ -173,8 +173,8 @@ D2 (TableRollResult) ─────────────────┤     
 **Recommended: Single PR** — at ~440 lines total (including tests), this is manageable. Production code is ~210 lines. If the 400-line review budget is strict:
 
 **Alternative: 2 stacked PRs:**
-1. **PR 1** (`~210 lines`): Tasks D1, D2, E1, E2 — domain types + engine + history + unit tests
-2. **PR 2** (`~190 lines`): Tasks S1, V1, V2 — TableScreen composable + instrumented tests + lint
+1. **PR 1** (`~210 lines`): Tasks D1, D2, E1, E2 — domain types + engine + history + unit tests ✅
+2. **PR 2** (`~190 lines`): Tasks S1, V1, V2 — TableScreen composable + instrumented tests + lint ✅
 
 Stacked PRs keep each under 200 lines for a faster review cycle. The engine PR can be reviewed independently of the UI.
 

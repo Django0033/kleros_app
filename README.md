@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling and random name generation, built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, and scene inspiration tables. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -31,14 +31,66 @@ Generate fantasy names using a table-driven syllable composition system.
 > [!NOTE]
 > The name generator reuses `DiceRoller` from the dice feature for all random rolls, keeping the random logic in one place.
 
-## Screens
+### Meaning Tables
 
-The app has two screens toggled via `FilterChip` navigation:
+Roll on 1d100 word tables for scene inspiration — action and description word pairs.
+
+- **Action table**: 50 words (Attain, Betray, Create, Fight, Help, Surprise, ...)
+- **Description table**: 50 words (Beautiful, Dangerous, Mysterious, Powerful, Strange, ...)
+- **2-point ranges**: 1-2, 3-4, ..., 99-100 for fine-grained results
+- **Cross-table rolling**: Switch between Action and Description with a tap
+
+## Screens
 
 | Screen | Description |
 |--------|-------------|
 | **Dice Roll** | Select a dice type, roll, and see animated results with history |
 | **Name Gen** | Choose roll mode, generate fantasy names, and browse history |
+| **Meaning** | Roll on Action or Description word tables for scene inspiration |
+
+## Architecture
+
+The app follows a simple single-module structure with composable-local state management — no ViewModels, DI, or navigation library. Shared infrastructure is extracted into reusable components: `TableRoller` (generic table lookup engine) and `TableScreen` (reusable composable with table selector, roll button, result display, and history).
+
+```
+app/src/main/java/com/kleros/
+├── MainActivity.kt           # Activity + Screen toggle navigation
+├── table/                     # Shared infrastructure
+│   ├── TableEntry.kt          # Sealed class: RANGE, DIRECT, RANGE_MODIFIER
+│   ├── TableDef.kt            # Table definition (name + entries)
+│   ├── TableRoller.kt         # Generic table lookup engine
+│   ├── TableRollResult.kt     # Sealed: Success, Error
+│   ├── TableHistory.kt        # Immutable capped history
+│   └── TableScreen.kt         # Reusable composable
+├── dice/                      # Dice roll feature
+│   ├── DiceType.kt            # Enum: D4–D100 with face count
+│   ├── DiceRollResult.kt      # Result data class
+│   ├── DiceRoller.kt          # Pure random roll function
+│   ├── RollHistory.kt         # Immutable capped history
+│   └── DiceScreen.kt          # Dice roll composable
+├── namegenerator/             # Name generator feature
+│   ├── RollMode.kt            # NORMAL / ADVANTAGE / DISADVANTAGE
+│   ├── NameResult.kt          # Generated name data class
+│   ├── NameHistory.kt         # Immutable capped history
+│   ├── NameTable.kt           # 20-row syllable table
+│   ├── NameGenerator.kt       # Pattern parser + generation engine
+│   └── NameScreen.kt          # Name generator composable
+├── meaning/                   # Meaning tables feature
+│   ├── MeaningData.kt         # 100 word entries (50 action + 50 description)
+│   └── MeaningScreen.kt       # TableScreen wrapper with D100
+└── ui/theme/                  # Material3 theming
+    ├── Color.kt
+    ├── Theme.kt               # KlerosTheme with dynamic color support
+    └── Type.kt
+```
+
+### Key design decisions
+
+- **Pure functions**: `DiceRoller.roll()`, `NameGenerator.generate()`, and `TableRoller.roll()` are pure Kotlin with no Android dependencies — trivially testable
+- **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
+- **Reusable screen**: `TableScreen` composable accepts a list of `TableDef` and renders a complete selector-roll-result-history flow. Adding a new table feature is just data + a thin wrapper
+- **Immutable state**: All history types return new instances on append — no mutation
+- **Composable-local state**: `remember { mutableStateOf(...) }` for screen state — no ViewModel overhead for this scope
 
 ## Getting Started
 
@@ -65,39 +117,6 @@ cd kleros_app
 ./gradlew check
 ```
 
-## Architecture
-
-The app follows a simple single-module structure with composable-local state management — no ViewModels, DI, or navigation library.
-
-```
-app/src/main/java/com/kleros/
-├── MainActivity.kt           # Activity + Screen toggle navigation
-├── dice/                      # Dice roll feature
-│   ├── DiceType.kt            # Enum: D4–D100 with face count
-│   ├── DiceRollResult.kt      # Result data class
-│   ├── DiceRoller.kt          # Pure random roll function
-│   ├── RollHistory.kt         # Immutable capped history (max 10)
-│   └── DiceScreen.kt          # Dice roll composable
-├── namegenerator/             # Name generator feature
-│   ├── RollMode.kt            # NORMAL / ADVANTAGE / DISADVANTAGE
-│   ├── NameResult.kt          # Generated name data class
-│   ├── NameHistory.kt         # Immutable capped history (max 10)
-│   ├── NameTable.kt           # 20-row syllable table
-│   ├── NameGenerator.kt       # Pattern parser + generation engine
-│   └── NameScreen.kt          # Name generator composable
-└── ui/theme/                  # Material3 theming
-    ├── Color.kt
-    ├── Theme.kt               # KlerosTheme with dynamic color support
-    └── Type.kt
-```
-
-### Key design decisions
-
-- **Pure functions**: `DiceRoller.roll()` and `NameGenerator.generate()` are pure Kotlin with no Android dependencies — trivially testable
-- **Reusable random engine**: Name generator calls `DiceRoller.roll(DiceType.D20)` instead of duplicating random logic
-- **Immutable state**: History types (RollHistory, NameHistory) return new instances on append — no mutation
-- **Composable-local state**: `remember { mutableStateOf(...) }` for screen state — no ViewModel overhead for this scope
-
 ## Testing
 
 | Layer | Tool | Location |
@@ -113,13 +132,13 @@ app/src/main/java/com/kleros/
 # Compose UI tests (requires emulator or device)
 ./gradlew connectedDebugAndroidTest
 
-# Full report
+# View coverage report
 ./gradlew jacocoTestReport
 # Open: app/build/reports/jacoco/jacocoTestReport/html/index.html
 ```
 
 > [!TIP]
-> Pre-commit hooks are configured to run `ktlintCheck` and `detekt` automatically. Bypass with `SKIP_CHECKS=1 git commit`.
+> Pre-commit hooks run `ktlintCheck` and `detekt` automatically. Bypass with `SKIP_CHECKS=1 git commit`.
 
 ## Code Quality
 

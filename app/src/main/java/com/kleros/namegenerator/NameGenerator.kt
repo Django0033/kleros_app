@@ -42,7 +42,7 @@ object NameGenerator {
         data class LiteralSuffix(val text: String) : Operation
     }
 
-    private enum class Column { INICIO1, INICIO2, ENDING }
+    private enum class Column { SYLLABLE1, SYLLABLE2, SUFFIX }
 
     private enum class Range { ALL, FIRST_HALF, LAST_HALF }
 
@@ -52,11 +52,11 @@ object NameGenerator {
         while (i < pattern.length) {
             i = when (pattern[i]) {
                 '1' -> {
-                    operations.add(Operation.SyllableColumn(Column.INICIO1, Range.ALL))
+                    operations.add(Operation.SyllableColumn(Column.SYLLABLE1, Range.ALL))
                     i + 1
                 }
                 '2' -> {
-                    operations.add(Operation.SyllableColumn(Column.INICIO2, Range.ALL))
+                    operations.add(Operation.SyllableColumn(Column.SYLLABLE2, Range.ALL))
                     i + 1
                 }
                 '3' -> parseDigitThree(pattern, i, operations)
@@ -74,20 +74,20 @@ object NameGenerator {
         if (index + 1 < pattern.length) {
             return when (pattern[index + 1]) {
                 '-' -> {
-                    operations.add(Operation.SyllableColumn(Column.ENDING, Range.FIRST_HALF))
+                    operations.add(Operation.SyllableColumn(Column.SUFFIX, Range.FIRST_HALF))
                     index + 2
                 }
                 '+' -> {
-                    operations.add(Operation.SyllableColumn(Column.ENDING, Range.LAST_HALF))
+                    operations.add(Operation.SyllableColumn(Column.SUFFIX, Range.LAST_HALF))
                     index + 2
                 }
                 else -> {
-                    operations.add(Operation.SyllableColumn(Column.ENDING, Range.ALL))
+                    operations.add(Operation.SyllableColumn(Column.SUFFIX, Range.ALL))
                     index + 1
                 }
             }
         }
-        operations.add(Operation.SyllableColumn(Column.ENDING, Range.ALL))
+        operations.add(Operation.SyllableColumn(Column.SUFFIX, Range.ALL))
         return index + 1
     }
 
@@ -119,9 +119,9 @@ object NameGenerator {
     private fun getCellValue(rowIndex: Int, column: Column): String {
         val row = NameTable.row(rowIndex)
         return when (column) {
-            Column.INICIO1 -> row.inicio1
-            Column.INICIO2 -> row.inicio2
-            Column.ENDING -> row.ending
+            Column.SYLLABLE1 -> row.syllable1
+            Column.SYLLABLE2 -> row.syllable2
+            Column.SUFFIX -> row.suffix
         }
     }
 

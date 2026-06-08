@@ -24,7 +24,7 @@ Generate fantasy names using a table-driven syllable composition system.
 
 - **3 roll modes**: Normal (1d20), Advantage (max 2d20 — feminine skew), Disadvantage (min 2d20 — masculine skew)
 - **20 name patterns**: Each row has a unique syllable pattern (e.g. `12o`, `123-a`, `111`) that determines column selection
-- **Syllable composition**: Each digit in the pattern maps to an independent 1d20 roll on Inicio 1, Inicio 2, or Ending columns
+- **Syllable composition**: Each digit in the pattern maps to an independent 1d20 roll on Syllable 1, Syllable 2, or Suffix columns
 - **Parenthetical prefixes**: Entries like `(f)a` resolve to `fa` or `a` depending on syllable position
 - **Generation history**: Last 10 generated names preserved per session
 

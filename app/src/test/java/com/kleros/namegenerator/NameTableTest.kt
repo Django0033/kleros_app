@@ -20,23 +20,23 @@ class NameTableTest {
     }
 
     @Test
-    fun `every row has non-empty inicio1`() {
+    fun `every row has non-empty syllable1`() {
         NameTable.rows.forEachIndexed { index, row ->
-            assertTrue("Row ${index + 1} inicio1 is empty", row.inicio1.isNotBlank())
+            assertTrue("Row ${index + 1} syllable1 is empty", row.syllable1.isNotBlank())
         }
     }
 
     @Test
-    fun `every row has non-empty inicio2`() {
+    fun `every row has non-empty syllable2`() {
         NameTable.rows.forEachIndexed { index, row ->
-            assertTrue("Row ${index + 1} inicio2 is empty", row.inicio2.isNotBlank())
+            assertTrue("Row ${index + 1} syllable2 is empty", row.syllable2.isNotBlank())
         }
     }
 
     @Test
-    fun `every row has non-empty ending`() {
+    fun `every row has non-empty suffix`() {
         NameTable.rows.forEachIndexed { index, row ->
-            assertTrue("Row ${index + 1} ending is empty", row.ending.isNotBlank())
+            assertTrue("Row ${index + 1} suffix is empty", row.suffix.isNotBlank())
         }
     }
 

@@ -4,9 +4,9 @@ package com.kleros.namegenerator
 
 data class NameTableRow(
     val pattern: String,
-    val inicio1: String,
-    val inicio2: String,
-    val ending: String,
+    val syllable1: String,
+    val syllable2: String,
+    val suffix: String,
 )
 
 object NameTable {

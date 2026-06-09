@@ -4,35 +4,47 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import com.kleros.character.CharacterScreen
 import com.kleros.dice.DiceScreen
 import com.kleros.meaning.MeaningScreen
 import com.kleros.namegenerator.NameScreen
 import com.kleros.ui.theme.KlerosTheme
+import kotlinx.coroutines.launch
 
 @Suppress("FunctionNaming")
-private enum class Screen(val label: String) {
-    DICE("Dice Roll"),
-    NAME_GENERATOR("Name Gen"),
-    MEANING("Meaning"),
-    CHARACTER_CRAFTER("Char Caft"),
+private enum class Screen(val label: String, val icon: ImageVector) {
+    DICE("Dice Roll", Icons.Filled.Casino),
+    NAME_GENERATOR("Name Gen", Icons.Filled.Badge),
+    MEANING("Meaning", Icons.Filled.Psychology),
+    CHARACTER_CRAFTER("Char Craft", Icons.Filled.Face),
 }
 
 class MainActivity : ComponentActivity() {
@@ -41,40 +53,61 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KlerosTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(modifier = Modifier.padding(innerPadding))
-                }
+                AppNavigation(modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionNaming")
 @Composable
-private fun AppNavigation(modifier: Modifier = Modifier) {
+internal fun AppNavigation(modifier: Modifier = Modifier) {
     var currentScreen by remember { mutableStateOf(Screen.DICE) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-        ) {
-            Screen.entries.forEach { screen ->
-                FilterChip(
-                    selected = currentScreen == screen,
-                    onClick = { currentScreen = screen },
-                    label = { Text(screen.label) },
-                )
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = true,
+        drawerContent = {
+            ModalDrawerSheet {
+                Screen.entries.forEach { screen ->
+                    NavigationDrawerItem(
+                        selected = currentScreen == screen,
+                        onClick = {
+                            currentScreen = screen
+                            scope.launch { drawerState.close() }
+                        },
+                        icon = { Icon(screen.icon, contentDescription = screen.label) },
+                        label = { Text(screen.label) },
+                    )
+                }
             }
-        }
-
-        when (currentScreen) {
-            Screen.DICE -> DiceScreen()
-            Screen.NAME_GENERATOR -> NameScreen()
-            Screen.MEANING -> MeaningScreen()
-            Screen.CHARACTER_CRAFTER -> CharacterScreen()
+        },
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(currentScreen.label) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { scope.launch { drawerState.open() } },
+                            modifier = Modifier.testTag("navDrawerHamburger"),
+                        ) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Open navigation")
+                        }
+                    },
+                )
+            },
+            modifier = modifier,
+        ) { innerPadding ->
+            when (currentScreen) {
+                Screen.DICE -> DiceScreen(modifier = Modifier.padding(innerPadding))
+                Screen.NAME_GENERATOR -> NameScreen(modifier = Modifier.padding(innerPadding))
+                Screen.MEANING -> MeaningScreen(modifier = Modifier.padding(innerPadding))
+                Screen.CHARACTER_CRAFTER -> CharacterScreen(modifier = Modifier.padding(innerPadding))
+            }
         }
     }
 }

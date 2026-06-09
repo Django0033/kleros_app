@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Menu
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import com.kleros.character.CharacterScreen
+import com.kleros.creature.CreatureScreen
 import com.kleros.dice.DiceScreen
 import com.kleros.meaning.MeaningScreen
 import com.kleros.namegenerator.NameScreen
@@ -45,6 +47,7 @@ private enum class Screen(val label: String, val icon: ImageVector) {
     NAME_GENERATOR("Name Gen", Icons.Filled.Badge),
     MEANING("Meaning", Icons.Filled.Psychology),
     CHARACTER_CRAFTER("Char Craft", Icons.Filled.Face),
+    CREATURE_CRAFTER("Crea Craft", Icons.Filled.BugReport),
 }
 
 class MainActivity : ComponentActivity() {
@@ -107,6 +110,7 @@ internal fun AppNavigation(modifier: Modifier = Modifier) {
                 Screen.NAME_GENERATOR -> NameScreen(modifier = Modifier.padding(innerPadding))
                 Screen.MEANING -> MeaningScreen(modifier = Modifier.padding(innerPadding))
                 Screen.CHARACTER_CRAFTER -> CharacterScreen(modifier = Modifier.padding(innerPadding))
+                Screen.CREATURE_CRAFTER -> CreatureScreen(modifier = Modifier.padding(innerPadding))
             }
         }
     }

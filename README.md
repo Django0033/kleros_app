@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, and NPC creation. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC and creature creation. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -50,9 +50,20 @@ Generate quick NPCs with descriptors and statistics — four independent rolls o
 - **Character card**: Formatted result showing all 4 slots and statistics tier
 - **Generation history**: Last 10 NPCs preserved per session
 
+### Creature Crafter
+
+Generate creatures with descriptors, abilities, behaviors, and statistics — roll individually or all at once.
+
+- **Descriptors table**: ~100 weighted entries (1d100) for appearance and traits
+- **Abilities table**: 50 paired entries (1d100) for special powers and features
+- **Behavior tables**: Initial behavior (1d10) and New behavior (1d10) for encounter dynamics
+- **Statistics**: Reuses the same tier table as Character Crafter (1d10)
+- **Incremental rolling**: Roll descriptors, abilities, initial behavior, new behavior, and statistics independently — no need to regenerate everything
+- **Generation history**: Last 10 creatures preserved per session
+
 ## Screens
 
-Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to switch between tools.
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 5 tools.
 
 | Screen | Icon | Description |
 |--------|------|-------------|
@@ -60,6 +71,7 @@ Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the 
 | **Name Gen** | Badge | Choose roll mode, generate fantasy names, and browse history |
 | **Meaning** | Psychology | Roll on Action or Description word tables for scene inspiration |
 | **Char Craft** | Face | Generate NPCs with descriptors and statistics |
+| **Creature** | BugReport | Generate creatures with descriptors, abilities, and behaviors |
 
 ## Architecture
 
@@ -97,6 +109,12 @@ app/src/main/java/com/kleros/
 │   ├── CharacterResult.kt     # Data class with 4 slots + stat
 │   ├── CharacterHistory.kt    # Immutable capped history
 │   └── CharacterScreen.kt     # NPC generation composable
+├── creature/                  # Creature Crafter feature
+│   ├── CreatureData.kt        # 100 descriptors + 50 abilities + behavior tables
+│   ├── CreatureCrafter.kt     # Creature generation + incremental mutation methods
+│   ├── CreatureResult.kt      # Data class with lists for descriptors/abilities
+│   ├── CreatureHistory.kt     # Immutable capped history
+│   └── CreatureScreen.kt      # Creature generation composable
 └── ui/theme/                  # Material3 theming
     ├── Color.kt
     ├── Theme.kt               # KlerosTheme with dynamic color support
@@ -107,7 +125,8 @@ app/src/main/java/com/kleros/
 
 - **Pure functions**: `DiceRoller.roll()`, `NameGenerator.generate()`, and `TableRoller.roll()` are pure Kotlin with no Android dependencies — trivially testable
 - **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
-- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter)
+- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter, Creature Crafter)
+- **Incremental mutation**: Creature Crafter supports rolling individual elements (descriptors, abilities, behaviors, statistics) independently after the initial generation — each mutation returns a new copy preserving immutability
 - **Injectable randomness**: All generators accept a `rollFn: (DiceType) -> Int` parameter, defaulting to `DiceRoller.roll()`. Tests inject deterministic lambdas for predictable results
 - **Drawer navigation**: Material3 `ModalNavigationDrawer` with `TopAppBar` replaces FilterChip nav — scales to any number of screens without layout changes
 - **Immutable state**: All history types return new instances on append — no mutation

@@ -52,20 +52,22 @@ Generate quick NPCs with descriptors and statistics — four independent rolls o
 
 ## Screens
 
-| Screen | Description |
-|--------|-------------|
-| **Dice Roll** | Select a dice type, roll, and see animated results with history |
-| **Name Gen** | Choose roll mode, generate fantasy names, and browse history |
-| **Meaning** | Roll on Action or Description word tables for scene inspiration |
-| **Char Caft** | Generate NPCs with descriptors and statistics |
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to switch between tools.
+
+| Screen | Icon | Description |
+|--------|------|-------------|
+| **Dice Roll** | Casino | Select a dice type, roll, and see animated results with history |
+| **Name Gen** | Badge | Choose roll mode, generate fantasy names, and browse history |
+| **Meaning** | Psychology | Roll on Action or Description word tables for scene inspiration |
+| **Char Craft** | Face | Generate NPCs with descriptors and statistics |
 
 ## Architecture
 
-The app follows a simple single-module structure with composable-local state management — no ViewModels, DI, or navigation library. Shared infrastructure is extracted into reusable components: `TableRoller` (generic table lookup engine) and `TableScreen` (reusable composable with table selector, roll button, result display, and history).
+The app follows a simple single-module structure with composable-local state management — no ViewModels, DI, or navigation library. Screen switching uses a Material3 `ModalNavigationDrawer` with a `TopAppBar` and hamburger icon. Shared infrastructure is extracted into reusable components: `TableRoller` (generic table lookup engine) and `TableScreen` (reusable composable with table selector, roll button, result display, and history).
 
 ```
 app/src/main/java/com/kleros/
-├── MainActivity.kt           # Activity + Screen toggle navigation
+├── MainActivity.kt           # Activity + ModalNavigationDrawer nav
 ├── table/                     # Shared infrastructure
 │   ├── TableEntry.kt          # Sealed class: RANGE, DIRECT, RANGE_MODIFIER
 │   ├── TableDef.kt            # Table definition (name + entries)
@@ -107,6 +109,7 @@ app/src/main/java/com/kleros/
 - **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
 - **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter)
 - **Injectable randomness**: All generators accept a `rollFn: (DiceType) -> Int` parameter, defaulting to `DiceRoller.roll()`. Tests inject deterministic lambdas for predictable results
+- **Drawer navigation**: Material3 `ModalNavigationDrawer` with `TopAppBar` replaces FilterChip nav — scales to any number of screens without layout changes
 - **Immutable state**: All history types return new instances on append — no mutation
 - **Composable-local state**: `remember { mutableStateOf(...) }` for screen state — no ViewModel overhead for this scope
 

@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.kleros.creature
 
 import com.kleros.character.CharacterData
@@ -12,46 +14,91 @@ object CreatureCrafter {
     ): CreatureResult {
         val desc1 = lookupDescriptor(rollFn(DiceType.D100))
         val desc2 = lookupDescriptor(rollFn(DiceType.D100))
-        val desc3 = lookupDescriptor(rollFn(DiceType.D100))
-        val ability = lookupAbility(rollFn(DiceType.D100))
+        val ability1 = lookupAbility(rollFn(DiceType.D100))
+        val ability2 = lookupAbility(rollFn(DiceType.D100))
         val behavior = lookupInitialBehavior(rollFn(DiceType.D10))
         val statistics = lookupStatistic(rollFn(DiceType.D10))
 
         return CreatureResult(
-            descriptors = listOf(desc1, desc2, desc3),
-            abilities = listOf(ability),
+            descriptors = listOf(desc1, desc2),
+            abilities = listOf(ability1, ability2),
             initialBehavior = behavior,
             statistics = statistics,
         )
     }
 
     fun rollDescriptor(
-        result: CreatureResult,
+        result: CreatureResult? = null,
         rollFn: (DiceType) -> Int = { DiceRoller.roll(it) },
     ): CreatureResult {
+        val base = result ?: CreatureResult(
+            descriptors = emptyList(),
+            abilities = emptyList(),
+            initialBehavior = "",
+            statistics = "",
+        )
         val descriptor = lookupDescriptor(rollFn(DiceType.D100))
-        return result.copy(
-            descriptors = result.descriptors + descriptor,
+        return base.copy(
+            descriptors = base.descriptors + descriptor,
         )
     }
 
     fun rollAbility(
-        result: CreatureResult,
+        result: CreatureResult? = null,
         rollFn: (DiceType) -> Int = { DiceRoller.roll(it) },
     ): CreatureResult {
+        val base = result ?: CreatureResult(
+            descriptors = emptyList(),
+            abilities = emptyList(),
+            initialBehavior = "",
+            statistics = "",
+        )
         val ability = lookupAbility(rollFn(DiceType.D100))
-        return result.copy(
-            abilities = result.abilities + ability,
+        return base.copy(
+            abilities = base.abilities + ability,
         )
     }
 
-    fun rollNewBehavior(
-        result: CreatureResult,
+    fun rollStatistics(
+        result: CreatureResult? = null,
         rollFn: (DiceType) -> Int = { DiceRoller.roll(it) },
     ): CreatureResult {
-        if (result.newBehavior != null) return result
+        val base = result ?: CreatureResult(
+            descriptors = emptyList(),
+            abilities = emptyList(),
+            initialBehavior = "",
+            statistics = "",
+        )
+        val stat = lookupStatistic(rollFn(DiceType.D10))
+        return base.copy(statistics = stat)
+    }
+
+    fun rollInitialBehavior(
+        result: CreatureResult? = null,
+        rollFn: (DiceType) -> Int = { DiceRoller.roll(it) },
+    ): CreatureResult {
+        val base = result ?: CreatureResult(
+            descriptors = emptyList(),
+            abilities = emptyList(),
+            initialBehavior = "",
+            statistics = "",
+        )
+        val behavior = lookupInitialBehavior(rollFn(DiceType.D10))
+        return base.copy(initialBehavior = behavior)
+    }
+
+    fun rollNewBehavior(
+        result: CreatureResult? = null,
+        rollFn: (DiceType) -> Int = { DiceRoller.roll(it) },
+    ): CreatureResult {
+        val base = result ?: CreatureResult(
+            descriptors = emptyList(),
+            abilities = emptyList(),
+            initialBehavior = "",
+            statistics = "",
+        )
         val behavior = lookupNewBehavior(rollFn(DiceType.D10))
-        return result.copy(
+        return base.copy(
             newBehavior = behavior,
         )
     }

@@ -64,11 +64,11 @@ fun CreatureScreen(modifier: Modifier = Modifier) {
             HorizontalDivider()
 
             Spacer(Modifier.height(12.dp))
+        }
 
-            ActionButtons(result = result) { updatedResult ->
-                currentResult = updatedResult
-                history = history.append(updatedResult)
-            }
+        ActionButtons(result = currentResult) { updatedResult ->
+            currentResult = updatedResult
+            history = history.append(updatedResult)
         }
 
         Spacer(Modifier.height(16.dp))
@@ -114,7 +114,7 @@ private fun ResultCard(result: CreatureResult) {
 @Suppress("FunctionNaming", "ParameterNaming")
 @Composable
 private fun ActionButtons(
-    result: CreatureResult,
+    result: CreatureResult?,
     onResultUpdated: (CreatureResult) -> Unit,
 ) {
     Column {
@@ -125,7 +125,7 @@ private fun ActionButtons(
             },
             modifier = Modifier.testTag("rollDescriptorButton"),
         ) {
-            Text("Roll Descriptor")
+            Text("Descriptors")
         }
 
         Spacer(Modifier.height(8.dp))
@@ -137,7 +137,27 @@ private fun ActionButtons(
             },
             modifier = Modifier.testTag("rollAbilityButton"),
         ) {
-            Text("Roll Ability")
+            Text("Abilities")
+        }
+
+        OutlinedButton(
+            onClick = {
+                val updated = CreatureCrafter.rollInitialBehavior(result)
+                onResultUpdated(updated)
+            },
+            modifier = Modifier.testTag("rollInitialButton"),
+        ) {
+            Text("Initial Behavior")
+        }
+
+        OutlinedButton(
+            onClick = {
+                val updated = CreatureCrafter.rollStatistics(result)
+                onResultUpdated(updated)
+            },
+            modifier = Modifier.testTag("rollStatsButton"),
+        ) {
+            Text("Statistics")
         }
 
         Spacer(Modifier.height(8.dp))

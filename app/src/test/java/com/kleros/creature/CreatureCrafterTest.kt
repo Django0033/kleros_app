@@ -12,18 +12,18 @@ class CreatureCrafterTest {
     @Test
     fun `deterministic rolls produce expected values`() {
         val rollValues = mutableListOf(
-            12,  // descriptor 1 → Loud (index 12 on left column 2-3 mapping)
+            12,  // descriptor 1
             55,  // descriptor 2
-            88,  // descriptor 3
-            3,   // ability → Attach (3-4)
+            3,   // ability 1 → Attach (3-4)
+            7,   // ability 2 → Bypass (7-8)
             5,   // initial behavior → Friendly (5)
             6,   // statistics → "What you expect" (range 4-7)
         )
         val rollFn: (DiceType) -> Int = { rollValues.removeFirst() }
         val result = CreatureCrafter.generate(rollFn = rollFn)
 
-        assertEquals(3, result.descriptors.size)
-        assertEquals(1, result.abilities.size)
+        assertEquals(2, result.descriptors.size)
+        assertEquals(2, result.abilities.size)
         assertEquals("Friendly", result.initialBehavior)
         assertNotNull(result.statistics)
         assertNull(result.newBehavior)
@@ -72,8 +72,8 @@ class CreatureCrafterTest {
         val result = CreatureCrafter.generate(rollFn = rollFn)
 
         val withExtra = CreatureCrafter.rollDescriptor(result, rollFn = { 50 })
-        assertEquals(4, withExtra.descriptors.size)
-        assertEquals("Extra", withExtra.descriptors[3])
+        assertEquals(3, withExtra.descriptors.size)
+        assertEquals("Extra", withExtra.descriptors[2])
     }
 
     @Test
@@ -83,8 +83,8 @@ class CreatureCrafterTest {
         val result = CreatureCrafter.generate(rollFn = rollFn)
 
         val withExtra = CreatureCrafter.rollAbility(result, rollFn = { 4 })
-        assertEquals(2, withExtra.abilities.size)
-        assertEquals("Attach", withExtra.abilities[1])
+        assertEquals(3, withExtra.abilities.size)
+        assertEquals("Attach", withExtra.abilities[2])
     }
 
     @Test
@@ -118,7 +118,33 @@ class CreatureCrafterTest {
     }
 
     @Test
-    fun `rollNewBehavior is no-op when already set`() {
+    fun `rollStatistics replaces statistics`() {
+        val result = CreatureResult(
+            descriptors = listOf("Amorphous"),
+            abilities = listOf("Absorb"),
+            initialBehavior = "Friendly",
+            statistics = "What you expect",
+        )
+
+        val updated = CreatureCrafter.rollStatistics(result, rollFn = { 10 })
+        assertEquals("About 50% higher", updated.statistics)
+    }
+
+    @Test
+    fun `rollInitialBehavior replaces initialBehavior`() {
+        val result = CreatureResult(
+            descriptors = listOf("Amorphous"),
+            abilities = listOf("Absorb"),
+            initialBehavior = "Friendly",
+            statistics = "What you expect",
+        )
+
+        val updated = CreatureCrafter.rollInitialBehavior(result, rollFn = { 4 })
+        assertEquals("Wary and alert", updated.initialBehavior)
+    }
+
+    @Test
+    fun `rollNewBehavior replaces existing newBehavior`() {
         val result = CreatureResult(
             descriptors = listOf("Amorphous"),
             abilities = listOf("Absorb"),
@@ -127,8 +153,8 @@ class CreatureCrafterTest {
             newBehavior = "Exhibits an Ability",
         )
 
-        val unchanged = CreatureCrafter.rollNewBehavior(result, rollFn = { 1 })
-        assertEquals("Exhibits an Ability", unchanged.newBehavior)
+        val updated = CreatureCrafter.rollNewBehavior(result, rollFn = { 1 })
+        assertEquals("Acts as expected", updated.newBehavior)
     }
 
     @Test

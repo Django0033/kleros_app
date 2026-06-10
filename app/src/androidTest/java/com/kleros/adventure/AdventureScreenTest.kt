@@ -34,7 +34,7 @@ class AdventureScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("tableSelector_Action").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("themeChip_Action").assertIsDisplayed()
     }
 
     @Test
@@ -45,7 +45,7 @@ class AdventureScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("tableSelector_Tension").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("themeChip_Tension").assertIsDisplayed()
     }
 
     @Test
@@ -56,7 +56,7 @@ class AdventureScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("tableSelector_Mystery").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("themeChip_Mystery").assertIsDisplayed()
     }
 
     @Test
@@ -67,7 +67,7 @@ class AdventureScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("tableSelector_Social").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("themeChip_Social").assertIsDisplayed()
     }
 
     @Test
@@ -78,6 +78,17 @@ class AdventureScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("tableSelector_Personal").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("themeChip_Personal").assertIsDisplayed()
+    }
+
+    @Test
+    fun randomThemeButtonIsPresent() {
+        composeTestRule.setContent {
+            KlerosTheme {
+                AdventureScreen()
+            }
+        }
+
+        composeTestRule.onNodeWithTag("randomThemeButton").assertIsDisplayed()
     }
 }

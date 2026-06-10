@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC and creature creation. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, and adventure creation. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -61,9 +61,18 @@ Generate creatures with descriptors, abilities, behaviors, and statistics — ro
 - **Incremental rolling**: Roll descriptors, abilities, initial behavior, new behavior, and statistics independently — no need to regenerate everything
 - **Generation history**: Last 10 creatures preserved per session
 
+### Adventure Crafter
+
+Roll on plot theme tables for story inspiration — pick a theme or go random.
+
+- **5 plot themes**: Action, Tension, Mystery, Social, Personal — each with 100 entries (1d100)
+- **Manual selection**: Pick a theme from FilterChips and roll
+- **Random Theme**: One tap picks a random theme and rolls automatically
+- **Roll history**: Last 10 plot words preserved per session
+
 ## Screens
 
-Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 5 tools.
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 6 tools.
 
 | Screen | Icon | Description |
 |--------|------|-------------|
@@ -72,6 +81,7 @@ Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the 
 | **Meaning** | Psychology | Roll on Action or Description word tables for scene inspiration |
 | **Char Craft** | Face | Generate NPCs with descriptors and statistics |
 | **Creature** | BugReport | Generate creatures with descriptors, abilities, and behaviors |
+| **Adv Craft** | Star | Roll on plot theme tables for story inspiration |
 
 ## Architecture
 
@@ -115,6 +125,9 @@ app/src/main/java/com/kleros/
 │   ├── CreatureResult.kt      # Data class with lists for descriptors/abilities
 │   ├── CreatureHistory.kt     # Immutable capped history
 │   └── CreatureScreen.kt      # Creature generation composable
+├── adventure/                 # Adventure Crafter feature
+│   ├── AdventureData.kt       # 5 plot tables × 100 DIRECT entries each
+│   └── AdventureScreen.kt     # Custom screen with theme selector + random button
 └── ui/theme/                  # Material3 theming
     ├── Color.kt
     ├── Theme.kt               # KlerosTheme with dynamic color support
@@ -125,7 +138,7 @@ app/src/main/java/com/kleros/
 
 - **Pure functions**: `DiceRoller.roll()`, `NameGenerator.generate()`, and `TableRoller.roll()` are pure Kotlin with no Android dependencies — trivially testable
 - **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
-- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter, Creature Crafter)
+- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter, Creature Crafter, Adventure Crafter)
 - **Incremental mutation**: Creature Crafter supports rolling individual elements (descriptors, abilities, behaviors, statistics) independently after the initial generation — each mutation returns a new copy preserving immutability
 - **Injectable randomness**: All generators accept a `rollFn: (DiceType) -> Int` parameter, defaulting to `DiceRoller.roll()`. Tests inject deterministic lambdas for predictable results
 - **Drawer navigation**: Material3 `ModalNavigationDrawer` with `TopAppBar` replaces FilterChip nav — scales to any number of screens without layout changes

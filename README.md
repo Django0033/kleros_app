@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, and adventure creation. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, and adventure creation, plus a Fate oracle. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -70,9 +70,19 @@ Roll on plot theme tables for story inspiration — pick a theme or go random.
 - **Random Theme**: One tap picks a random theme and rolls automatically
 - **Roll history**: Last 10 plot words preserved per session
 
+### Fate Oracle
+
+Ask Yes/No questions with 9 odds levels and random events on doubles.
+
+- **9 odds levels**: Impossible → Nearly Impossible → Very Unlikely → Unlikely → 50/50 → Likely → Very Likely → Nearly Certain → Certain
+- **4 outcome types**: Exceptional Yes, Yes, No, Exceptional No — each with probability-weighted ranges
+- **Random events**: Doubles (11, 22, ..., 99, 100) trigger a random event indicator
+- **Quick interaction**: Pick odds, tap Ask Oracle, see the result
+- **Roll history**: Last 10 oracle answers preserved per session
+
 ## Screens
 
-Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 6 tools.
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 7 tools.
 
 | Screen | Icon | Description |
 |--------|------|-------------|
@@ -82,6 +92,7 @@ Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the 
 | **Char Craft** | Face | Generate NPCs with descriptors and statistics |
 | **Creature** | BugReport | Generate creatures with descriptors, abilities, and behaviors |
 | **Adv Craft** | Star | Roll on plot theme tables for story inspiration |
+| **Fate** | Visibility | Ask the oracle with 9 odds levels |
 
 ## Architecture
 
@@ -128,6 +139,12 @@ app/src/main/java/com/kleros/
 ├── adventure/                 # Adventure Crafter feature
 │   ├── AdventureData.kt       # 5 plot tables × 100 DIRECT entries each
 │   └── AdventureScreen.kt     # Custom screen with theme selector + random button
+├── fate/                      # Fate Oracle feature
+│   ├── FateData.kt            # OddsLevel enum with 9 probability thresholds
+│   ├── FateRoller.kt          # 1d100 fate chart resolution engine
+│   ├── FateResult.kt          # Sealed class: ExceptionalYes, Yes, No, ExceptionalNo
+│   ├── FateHistory.kt         # Immutable capped history
+│   └── FateScreen.kt          # Oracle screen with odds selector + random event
 └── ui/theme/                  # Material3 theming
     ├── Color.kt
     ├── Theme.kt               # KlerosTheme with dynamic color support
@@ -138,7 +155,7 @@ app/src/main/java/com/kleros/
 
 - **Pure functions**: `DiceRoller.roll()`, `NameGenerator.generate()`, and `TableRoller.roll()` are pure Kotlin with no Android dependencies — trivially testable
 - **Reusable engine**: `TableRoller` handles 3 entry types (RANGE, DIRECT, RANGE_MODIFIER) and serves as the foundation for all table-driven features
-- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter, Creature Crafter, Adventure Crafter)
+- **Two screen patterns**: `TableScreen` for single-table-at-a-time features (Meaning Tables); custom composables with multi-roll results for richer features (Name Generator, Character Crafter, Creature Crafter, Adventure Crafter, Fate Oracle)
 - **Incremental mutation**: Creature Crafter supports rolling individual elements (descriptors, abilities, behaviors, statistics) independently after the initial generation — each mutation returns a new copy preserving immutability
 - **Injectable randomness**: All generators accept a `rollFn: (DiceType) -> Int` parameter, defaulting to `DiceRoller.roll()`. Tests inject deterministic lambdas for predictable results
 - **Drawer navigation**: Material3 `ModalNavigationDrawer` with `TopAppBar` replaces FilterChip nav — scales to any number of screens without layout changes

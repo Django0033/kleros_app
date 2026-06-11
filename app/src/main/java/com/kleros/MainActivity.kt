@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,10 +35,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import com.kleros.adventure.AdventureScreen
 import com.kleros.character.CharacterScreen
 import com.kleros.creature.CreatureScreen
 import com.kleros.dice.DiceScreen
-import com.kleros.adventure.AdventureScreen
+import com.kleros.fate.FateScreen
 import com.kleros.meaning.MeaningScreen
 import com.kleros.namegenerator.NameScreen
 import com.kleros.ui.theme.KlerosTheme
@@ -51,6 +53,7 @@ private enum class Screen(val label: String, val icon: ImageVector) {
     CHARACTER_CRAFTER("Char Craft", Icons.Filled.Face),
     CREATURE_CRAFTER("Crea Craft", Icons.Filled.BugReport),
     ADVENTURE_CRAFTER("Adv Craft", Icons.Filled.Star),
+    FATE("Fate", Icons.Filled.Visibility),
 }
 
 class MainActivity : ComponentActivity() {
@@ -115,6 +118,7 @@ internal fun AppNavigation(modifier: Modifier = Modifier) {
                 Screen.CHARACTER_CRAFTER -> CharacterScreen(modifier = Modifier.padding(innerPadding))
                 Screen.CREATURE_CRAFTER -> CreatureScreen(modifier = Modifier.padding(innerPadding))
                 Screen.ADVENTURE_CRAFTER -> AdventureScreen(modifier = Modifier.padding(innerPadding))
+                Screen.FATE -> FateScreen(modifier = Modifier.padding(innerPadding))
             }
         }
     }

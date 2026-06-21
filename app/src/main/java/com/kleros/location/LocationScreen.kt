@@ -32,11 +32,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LocationScreen(modifier: Modifier = Modifier) {
     var selectedRegion by remember { mutableStateOf<RegionSize?>(null) }
+    var elementCount by remember { mutableIntStateOf(0) }
     var currentResult by remember { mutableStateOf<LocationResult?>(null) }
     var history by remember { mutableStateOf(LocationHistory()) }
-    var elementCount by remember { mutableIntStateOf(0) }
 
     fun currentPP() = (selectedRegion?.startingPP ?: 0) + (elementCount / 3)
+    fun currentArea() = (elementCount / 3) + 1
     fun isFinished() = currentResult?.let { LocationCrafter.isComplete(it) } ?: false
 
     Column(
@@ -55,8 +56,8 @@ fun LocationScreen(modifier: Modifier = Modifier) {
             selectedRegion = selectedRegion,
             onRegionSelect = { region ->
                 selectedRegion = region
-                currentResult = null
                 elementCount = 0
+                currentResult = null
             },
         )
 
@@ -64,10 +65,11 @@ fun LocationScreen(modifier: Modifier = Modifier) {
             val finished = isFinished()
             StatsHeader(
                 pp = currentPP(),
-                areaNumber = elementCount + 1,
+                areaNumber = currentArea(),
             )
 
-            ActionButtons(onRollElement = {
+            ActionButtons(
+                onRollElement = {
                     val result = LocationCrafter.rollElement(
                         pp = currentPP(),
                         result = currentResult,

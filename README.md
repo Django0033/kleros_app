@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, adventure, and location creation, plus a Fate oracle. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, adventure, location, and mystery creation, plus a Fate oracle. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -80,9 +80,19 @@ Ask Yes/No questions with 9 odds levels and random events on doubles.
 - **Quick interaction**: Pick odds, tap Ask Oracle, see the result
 - **Roll history**: Last 10 oracle answers preserved per session
 
+### Mystery Crafter
+
+Investigate mysteries with progressive discovery checks and accumulated boxes.
+
+- **7 discovery tiers**: From "Nothing useful found" to "Definitive clue" — rolled as 1d100 + accumulated boxes
+- **Boxes accumulator**: Advances only on meaningful discoveries (new suspects, new clues, definitive answer)
+- **100 mystery descriptors**: (1d100) for flavor — Accident, Betray, Hidden, Motive, Witness, ...
+- **Progressive difficulty**: Higher boxes shift results toward connections and definitive answers
+- **Roll history**: Last 10 discovery results preserved per session
+
 ## Screens
 
-Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 8 tools.
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 9 tools.
 
 | Screen | Icon | Description |
 |--------|------|-------------|
@@ -94,6 +104,7 @@ Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the 
 | **Adv Craft** | Star | Roll on plot theme tables for story inspiration |
 | **Fate** | Visibility | Ask the oracle with 9 odds levels |
 | **Loc Craft** | Map | Explore procedural locations with PP progression |
+| **Mystery** | Search | Investigate mysteries with progressive discovery checks |
 
 ## Architecture
 
@@ -146,6 +157,12 @@ app/src/main/java/com/kleros/
 │   ├── FateResult.kt          # Sealed class: ExceptionalYes, Yes, No, ExceptionalNo
 │   ├── FateHistory.kt         # Immutable capped history
 │   └── FateScreen.kt          # Oracle screen with odds selector + random event
+├── mystery/                   # Mystery Crafter feature
+│   ├── MysteryData.kt         # 7 discovery RANGE + 100 descriptors DIRECT
+│   ├── MysteryCrafter.kt      # Accumulator check + descriptor roll
+│   ├── MysteryResult.kt       # discoveryResult, descriptor, boxes, isDefinitive
+│   ├── MysteryHistory.kt      # Immutable capped history
+│   └── MysteryScreen.kt       # Mystery screen with boxes counter
 └── ui/theme/                  # Material3 theming
     ├── Color.kt
     ├── Theme.kt               # KlerosTheme with dynamic color support

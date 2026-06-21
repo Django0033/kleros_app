@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Build](https://img.shields.io/badge/Build-passing-4caf50?style=flat-square)](https://github.com/Django0033/kleros_app/tree/main)
 
-Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, and adventure creation, plus a Fate oracle. Built with Kotlin and Jetpack Compose for Android.
+Toolkit for tabletop roleplaying sessions — dice rolling, random name generation, scene inspiration, NPC, creature, adventure, and location creation, plus a Fate oracle. Built with Kotlin and Jetpack Compose for Android.
 
 ## Features
 
@@ -82,7 +82,7 @@ Ask Yes/No questions with 9 odds levels and random events on doubles.
 
 ## Screens
 
-Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 7 tools.
+Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the left edge to choose between 8 tools.
 
 | Screen | Icon | Description |
 |--------|------|-------------|
@@ -93,6 +93,7 @@ Navigation uses a Material3 drawer — tap the hamburger icon or swipe from the 
 | **Creature** | BugReport | Generate creatures with descriptors, abilities, and behaviors |
 | **Adv Craft** | Star | Roll on plot theme tables for story inspiration |
 | **Fate** | Visibility | Ask the oracle with 9 odds levels |
+| **Loc Craft** | Map | Explore procedural locations with PP progression |
 
 ## Architecture
 
